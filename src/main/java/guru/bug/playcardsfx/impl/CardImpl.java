@@ -2,13 +2,11 @@ package guru.bug.playcardsfx.impl;
 
 import guru.bug.playcardsfx.Card;
 import guru.bug.playcardsfx.Rank;
+import guru.bug.playcardsfx.Stack;
 import guru.bug.playcardsfx.Suit;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.*;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,6 +27,7 @@ class CardImpl extends StackPane implements Card {
     private final ReadOnlyObjectWrapper<Rank> rank = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyObjectWrapper<Suit> suit = new ReadOnlyObjectWrapper<>();
     private final SimpleBooleanProperty faceDown = new SimpleBooleanProperty();
+    private final SimpleObjectProperty<StackImpl> parentStack = new SimpleObjectProperty<>();
     private final ObjectBinding<Rectangle2D> viewport = Bindings.createObjectBinding(() -> {
         double col;
         double row;
@@ -55,8 +54,8 @@ class CardImpl extends StackPane implements Card {
         imageView.fitHeightProperty().bind(heightProperty());
         imageView.fitWidthProperty().bind(widthProperty());
         imageView.setPreserveRatio(true);
+        visibleProperty().bind(parentStack.isNotNull());
     }
-
 
     @Override
     public Rank getRank() {
@@ -86,7 +85,24 @@ class CardImpl extends StackPane implements Card {
         this.faceDown.set(faceDown);
     }
 
+    @Override
+    public Stack getStack() {
+        return parentStack.get();
+    }
+
     public BooleanProperty faceDownProperty() {
         return faceDown;
+    }
+
+    public StackImpl getParentStack() {
+        return parentStack.get();
+    }
+
+    public ObjectProperty<StackImpl> parentStackProperty() {
+        return parentStack;
+    }
+
+    public void setParentStack(StackImpl parentStack) {
+        this.parentStack.set(parentStack);
     }
 }

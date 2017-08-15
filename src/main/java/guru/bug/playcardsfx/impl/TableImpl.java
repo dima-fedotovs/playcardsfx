@@ -25,6 +25,7 @@ class TableImpl extends Pane implements Table {
         result.setRow(col);
         result.setHOffset(hOfs);
         result.setVOffset(vOfs);
+        return result;
     }
 
     ;

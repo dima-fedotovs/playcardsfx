@@ -13,4 +13,6 @@ public interface Card {
     boolean isFaceDown();
 
     void setFaceDown(boolean faceDown);
+
+    Stack getStack();
 }

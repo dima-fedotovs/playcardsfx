@@ -2,9 +2,7 @@ package guru.bug.playcardsfx.impl;
 
 import guru.bug.playcardsfx.Card;
 import guru.bug.playcardsfx.Stack;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ReadOnlyListWrapper;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 
 import java.util.ArrayList;
@@ -22,9 +20,14 @@ public class StackImpl implements Stack {
     private final ReadOnlyListWrapper<CardImpl> cards = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
     private final SimpleDoubleProperty hOffset = new SimpleDoubleProperty();
     private final SimpleDoubleProperty vOffset = new SimpleDoubleProperty();
+    private final SimpleIntegerProperty column = new SimpleIntegerProperty();
+    private final SimpleIntegerProperty row = new SimpleIntegerProperty();
+    private final ReadOnlyDoubleWrapper x = new ReadOnlyDoubleWrapper();
+    private final ReadOnlyDoubleWrapper y = new ReadOnlyDoubleWrapper();
 
     public StackImpl(TableImpl table) {
         this.table = table;
+
     }
 
     @Override
@@ -38,6 +41,14 @@ public class StackImpl implements Stack {
 
     @Override
     public void setCards(Collection<Card> cards) {
+        this.cards.forEach(c -> {
+            StackImpl parentStack = c.getParentStack();
+            if (parentStack != null && parentStack != this) {
+                parentStack.cards.remove(c);
+                c.setParentStack(null);
+            }
+        });
+        table.getChildren().removeAll(this.cards);
         if (cards == null || cards.isEmpty()) {
             this.cards.clear();
         } else {
@@ -46,6 +57,7 @@ public class StackImpl implements Stack {
                     .collect(Collectors.toList());
             this.cards.setAll(list);
         }
+        table.getChildren().addAll(this.cards);
     }
 
     public double getHOffset() {
@@ -70,5 +82,29 @@ public class StackImpl implements Stack {
 
     public DoubleProperty vOffsetProperty() {
         return vOffset;
+    }
+
+    public int getColumn() {
+        return column.get();
+    }
+
+    public IntegerProperty columnProperty() {
+        return column;
+    }
+
+    public void setColumn(int column) {
+        this.column.set(column);
+    }
+
+    public int getRow() {
+        return row.get();
+    }
+
+    public IntegerProperty rowProperty() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row.set(row);
     }
 }
