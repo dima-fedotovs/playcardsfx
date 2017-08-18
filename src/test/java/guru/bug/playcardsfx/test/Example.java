@@ -1,11 +1,10 @@
 package guru.bug.playcardsfx.test;
 
-import guru.bug.playcardsfx.Card;
-import guru.bug.playcardsfx.PlayCardsFX;
-import guru.bug.playcardsfx.Stack;
-import guru.bug.playcardsfx.Table;
+import guru.bug.playcardsfx.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Dimitrijs Fedotovs <a href="http://www.bug.guru">www.bug.guru</a>
@@ -19,9 +18,15 @@ public class Example {
     }
 
     private static void start(Table table) {
-        List<Card> cards = table.createPack();
-        Stack st = table.createStack(0, 1, 25, 0);
-        st.setCards(cards);
+        List<Card> cards = table.createPack(false);
+        Collections.shuffle(cards);
+        List<Card> reds = cards.stream().filter(c -> c.getColor() == Color.RED).collect(Collectors.toList());
+        List<Card> blacks = cards.stream().filter(c -> c.getColor() == Color.BLACK).collect(Collectors.toList());
+        Stack redSt = table.createStack(0, 0, 0.2, 0.0);
+        Stack blackSt = table.createStack(0, 1.2, 0.2, 0);
+        blackSt.setCards(blacks);
+        Collections.shuffle(reds);
+        redSt.setCards(reds);
     }
 
 }

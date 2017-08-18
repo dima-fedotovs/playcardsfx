@@ -16,13 +16,13 @@ public class StackImpl implements Stack {
     private final TableImpl table;
     private final SimpleDoubleProperty horizOffset = new SimpleDoubleProperty();
     private final SimpleDoubleProperty vertOffset = new SimpleDoubleProperty();
-    private final SimpleIntegerProperty column = new SimpleIntegerProperty();
-    private final SimpleIntegerProperty row = new SimpleIntegerProperty();
+    private final SimpleDoubleProperty column = new SimpleDoubleProperty();
+    private final SimpleDoubleProperty row = new SimpleDoubleProperty();
     private final ReadOnlyDoubleWrapper startX = new ReadOnlyDoubleWrapper();
     private final ReadOnlyDoubleWrapper startY = new ReadOnlyDoubleWrapper();
 
 
-    public StackImpl(TableImpl table) {
+    StackImpl(TableImpl table) {
         this.table = table;
         startX.bind(table.cellWidthProperty().multiply(column));
         startY.bind(table.cellHeightProperty().multiply(row));
@@ -40,21 +40,22 @@ public class StackImpl implements Stack {
 
     @Override
     public void setCards(Collection<Card> cards) {
-        Set<CardImpl> oldMyCards = identitySetOfCards();
-        MutableInteger idx = new MutableInteger();
-        table.cardsStream().forEach(c -> {
-            oldMyCards.remove(c);
-            c.setParentStack(this);
-            c.setIndex(idx.getAndIncrement());
-        });
-        table.sortCards();
+        List<CardImpl> oldMyCards = owningCards();
+        List<CardImpl> newMyCards = cards.stream()
+                .map(c -> (CardImpl)c)
+                .collect(Collectors.toList());
         oldMyCards.forEach(c -> c.setParentStack(null));
+        table.getChildren().removeAll(oldMyCards);
+        table.getChildren().removeAll(newMyCards);
+        table.getChildren().addAll(newMyCards);
+        newMyCards.forEach(c -> c.setParentStack(this));
+        table.layout();
     }
 
-    private Set<CardImpl> identitySetOfCards() {
+    private List<CardImpl> owningCards() {
         return table.cardsStream()
                 .filter(c -> c.getParentStack() == this)
-                .collect(Collectors.toCollection(() -> Collections.newSetFromMap(new IdentityHashMap<>())));
+                .collect(Collectors.toList());
     }
 
     public double getHorizOffset() {
@@ -81,27 +82,27 @@ public class StackImpl implements Stack {
         return vertOffset;
     }
 
-    public int getColumn() {
+    public double getColumn() {
         return column.get();
     }
 
-    public void setColumn(int column) {
+    public void setColumn(double column) {
         this.column.set(column);
     }
 
-    public IntegerProperty columnProperty() {
+    public DoubleProperty columnProperty() {
         return column;
     }
 
-    public int getRow() {
+    public double getRow() {
         return row.get();
     }
 
-    public void setRow(int row) {
+    public void setRow(double row) {
         this.row.set(row);
     }
 
-    public IntegerProperty rowProperty() {
+    public DoubleProperty rowProperty() {
         return row;
     }
 

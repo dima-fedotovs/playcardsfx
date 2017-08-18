@@ -2,13 +2,12 @@ package guru.bug.playcardsfx.impl;
 
 import guru.bug.playcardsfx.*;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.NumberBinding;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.*;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 
 
 /**
@@ -17,16 +16,15 @@ import javafx.scene.image.ImageView;
  * @since 1.0
  */
 class CardImpl extends ImageView implements Card {
+    static final int CARD_IMG_WIDTH = 221;
+    static final int CARD_IMG_HEIGHT = 300;
     private static final Image IMG = new Image("/guru/bug/playcardsfx/cards.png");
-    private static final int CARD_IMG_WIDTH = 221;
-    private static final int CARD_IMG_HEIGHT = 300;
     private static final int BACK_COL = 0;
     private static final int BACK_ROW = 4;
     private final ReadOnlyObjectWrapper<Rank> rank = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyObjectWrapper<Suit> suit = new ReadOnlyObjectWrapper<>();
     private final SimpleBooleanProperty faceDown = new SimpleBooleanProperty();
     private final SimpleObjectProperty<StackImpl> parentStack = new SimpleObjectProperty<>();
-    private final SimpleIntegerProperty index = new SimpleIntegerProperty();
 
     CardImpl(Rank rank, Suit suit) {
         super(IMG);
@@ -47,21 +45,19 @@ class CardImpl extends ImageView implements Card {
             return new Rectangle2D(x, y, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
         }, this.rank, this.suit, faceDown);
         viewportProperty().bind(viewport);
-        setPreserveRatio(true);
-        DoubleBinding cellWidth = Bindings.selectDouble(parentProperty(), "cellWidth");
-        fitWidthProperty().bind(cellWidth);
-        DoubleBinding cellHeight = Bindings.selectDouble(parentProperty(), "cellHeight");
-        fitHeightProperty().bind(cellHeight);
         visibleProperty().bind(parentStack.isNotNull());
-        NumberBinding scale = Bindings.min(cellWidth.divide(CARD_IMG_WIDTH), cellHeight.divide(CARD_IMG_HEIGHT));
-        NumberBinding actualCardWidth = scale.multiply(CARD_IMG_WIDTH);
-        DoubleBinding startX = Bindings.selectDouble(parentStackProperty(), "startX");
-        NumberBinding ofsX = actualCardWidth.divide(100.0).multiply(Bindings.selectDouble(parentStackProperty(), "horizOffset")).multiply(index).add(startX);
-        layoutXProperty().bind(ofsX);
-        NumberBinding actualCardHeight = scale.multiply(CARD_IMG_HEIGHT);
-        DoubleBinding startY = Bindings.selectDouble(parentStackProperty(), "startY");
-        NumberBinding ofsY = actualCardHeight.divide(100.0).multiply(Bindings.selectDouble(parentStackProperty(), "vertOffset")).multiply(index).add(startY);
-        layoutYProperty().bind(ofsY);
+        setManaged(true);
+    }
+
+    @Override
+    public boolean isResizable() {
+        return true;
+    }
+
+    @Override
+    public void resize(double width, double height) {
+        setFitWidth(width);
+        setFitHeight(height);
     }
 
     @Override
@@ -118,15 +114,11 @@ class CardImpl extends ImageView implements Card {
         return parentStack;
     }
 
-    public int getIndex() {
-        return index.get();
-    }
 
-    public void setIndex(int index) {
-        this.index.set(index);
-    }
-
-    public IntegerProperty indexProperty() {
-        return index;
+    @Override
+    public String toString() {
+        return "Card{" + rank.get() +
+                ", " + suit.get() +
+                '}';
     }
 }

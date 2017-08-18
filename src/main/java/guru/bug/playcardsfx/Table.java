@@ -16,6 +16,6 @@ public interface Table {
 
     Card createCard(Rank rank, Suit suit);
 
-    Stack createStack(int col, int row, int hOfs, int vOfs);
+    Stack createStack(double col, double row, double hOfs, double vOfs);
 
 }

@@ -5,16 +5,18 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
-import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.ReadOnlyIntegerWrapper;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
-import javafx.scene.paint.LinearGradient;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.Pane;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -24,13 +26,13 @@ import java.util.stream.Stream;
  */
 public class TableImpl extends Pane implements Table {
     private static final Image BACKGROUND = new Image("/guru/bug/playcardsfx/pattern.png");
-    private final ReadOnlyIntegerWrapper columns = new ReadOnlyIntegerWrapper();
-    private final ReadOnlyIntegerWrapper rows = new ReadOnlyIntegerWrapper();
+    private final ReadOnlyDoubleWrapper columns = new ReadOnlyDoubleWrapper();
+    private final ReadOnlyDoubleWrapper rows = new ReadOnlyDoubleWrapper();
     private final ReadOnlyDoubleWrapper cellWidth = new ReadOnlyDoubleWrapper();
     private final ReadOnlyDoubleWrapper cellHeight = new ReadOnlyDoubleWrapper();
 
 
-    public TableImpl(int columns, int rows) {
+    TableImpl(int columns, int rows) {
         this.columns.set(columns);
         this.rows.set(rows);
         setBackground(new Background(new BackgroundImage(BACKGROUND, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, null, null)));
@@ -47,10 +49,10 @@ public class TableImpl extends Pane implements Table {
     }
 
     @Override
-    public Stack createStack(int col, int row, int hOfs, int vOfs) {
+    public Stack createStack(double col, double row, double hOfs, double vOfs) {
         StackImpl result = new StackImpl(this);
         result.setColumn(col);
-        result.setRow(col);
+        result.setRow(row);
         result.setHorizOffset(hOfs);
         result.setVertOffset(vOfs);
         return result;
@@ -77,42 +79,52 @@ public class TableImpl extends Pane implements Table {
         return result;
     }
 
-    public int getColumns() {
+    public double getColumns() {
         return columns.get();
     }
 
-    public ReadOnlyIntegerProperty columnsProperty() {
+    public ReadOnlyDoubleProperty columnsProperty() {
         return columns.getReadOnlyProperty();
     }
 
-    public int getRows() {
+    public double getRows() {
         return rows.get();
     }
 
-    public ReadOnlyIntegerProperty rowsProperty() {
+    public ReadOnlyDoubleProperty rowsProperty() {
         return rows.getReadOnlyProperty();
     }
 
-    public Stream<CardImpl> cardsStream() {
+    Stream<CardImpl> cardsStream() {
         return getChildren().stream()
                 .filter(n -> n instanceof CardImpl)
                 .map(n -> (CardImpl) n);
     }
 
-    public void sortCards() {
-        Collections.sort(getChildren(), this::compareChildren);
-    }
-
-    private int compareChildren(Node t1, Node t2) {
-        int v1 = -1;
-        int v2 = -1;
-        if (t1 instanceof CardImpl) {
-            v1 = ((CardImpl) t1).getIndex();
-        }
-        if (t2 instanceof CardImpl) {
-            v2 = ((CardImpl) t2).getIndex();
-        }
-        return (v1 - v2);
+    @Override
+    protected void layoutChildren() {
+        Map<StackImpl, List<CardImpl>> group = cardsStream()
+                .filter(c -> c.getParentStack() != null)
+                .collect(Collectors.groupingBy(
+                        CardImpl::getParentStack,
+                        IdentityHashMap::new,
+                        Collectors.mapping(Function.identity(), Collectors.toList())));
+        double cellWidth = getCellWidth();
+        double cellHeight = getCellHeight();
+        double scale = Math.min(cellWidth / CardImpl.CARD_IMG_WIDTH, cellHeight / CardImpl.CARD_IMG_HEIGHT);
+        double cardWidth = scale * CardImpl.CARD_IMG_WIDTH;
+        double cardHeight = scale * CardImpl.CARD_IMG_HEIGHT;
+        group.forEach((stack, cards) -> {
+            double startx = stack.getStartX();
+            double starty = stack.getStartY();
+            double stepx = cardWidth * stack.getHorizOffset();
+            double stepy = cardHeight * stack.getVertOffset();
+            for (int i = 0; i < cards.size(); i++) {
+                double x = startx + stepx * i;
+                double y = starty + stepy * i;
+                cards.get(i).resizeRelocate(x, y, cardWidth, cardHeight);
+            }
+        });
     }
 
     public double getCellWidth() {

@@ -7,7 +7,6 @@ package guru.bug.playcardsfx;
  */
 public enum Rank {
     ACE,
-    ONE,
     TWO,
     THREE,
     FOUR,
