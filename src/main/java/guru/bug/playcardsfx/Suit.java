@@ -6,8 +6,17 @@ package guru.bug.playcardsfx;
  * @since 1.0
  */
 public enum Suit {
-    CLUB,
-    DIAMOND,
-    HEART,
-    SPADE
+    CLUB(Color.BLACK),
+    DIAMOND(Color.RED),
+    HEART(Color.RED),
+    SPADE(Color.BLACK);
+
+    private final Color color;
+    Suit(Color color) {
+        this.color = color;
+    }
+
+    public Color getColor() {
+        return color;
+    }
 }

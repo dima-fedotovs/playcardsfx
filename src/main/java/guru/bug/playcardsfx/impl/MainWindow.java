@@ -1,8 +1,5 @@
 package guru.bug.playcardsfx.impl;
 
-import guru.bug.playcardsfx.PlayCardsFX;
-import guru.bug.playcardsfx.Rank;
-import guru.bug.playcardsfx.Suit;
 import guru.bug.playcardsfx.Table;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -36,10 +33,6 @@ public class MainWindow extends Application {
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         onStart.accept(table);
-        CardImpl card = (CardImpl) PlayCardsFX.createCard(Rank.ACE, Suit.CLUB);
-        table.getChildren().add(card);
-        card.setLayoutX(100);
-        card.setLayoutY(100);
         primaryStage.show();
     }
 }

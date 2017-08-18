@@ -16,16 +16,4 @@ public class PlayCardsFX {
         PlayCardsFXImpl.launch(args, width, height, onStart);
     }
 
-    public static List<Card> createFullDeck() {
-        return createFullDeck(false);
-    }
-
-    public static List<Card> createFullDeck(boolean faceDown) {
-        return PlayCardsFXImpl.createDeck(faceDown);
-    }
-
-    public static Card createCard(Rank rank, Suit suit) {
-        return PlayCardsFXImpl.createCard(rank, suit);
-    }
-
 }

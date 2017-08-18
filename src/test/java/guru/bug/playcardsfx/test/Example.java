@@ -2,6 +2,7 @@ package guru.bug.playcardsfx.test;
 
 import guru.bug.playcardsfx.Card;
 import guru.bug.playcardsfx.PlayCardsFX;
+import guru.bug.playcardsfx.Stack;
 import guru.bug.playcardsfx.Table;
 
 import java.util.List;
@@ -14,11 +15,13 @@ import java.util.List;
 public class Example {
 
     public static void main(String[] args) {
-        PlayCardsFX.launch(args, 3, 5, Example::start);
+        PlayCardsFX.launch(args, 5, 5, Example::start);
     }
 
     private static void start(Table table) {
-//        List<Card>
+        List<Card> cards = table.createPack();
+        Stack st = table.createStack(0, 1, 25, 0);
+        st.setCards(cards);
     }
 
 }

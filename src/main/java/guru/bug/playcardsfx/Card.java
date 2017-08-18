@@ -15,4 +15,7 @@ public interface Card {
     void setFaceDown(boolean faceDown);
 
     Stack getStack();
+
+    Color getColor();
+
 }
