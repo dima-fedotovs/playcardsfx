@@ -5,9 +5,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.*;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 
 
 /**
@@ -15,49 +13,30 @@ import javafx.scene.layout.StackPane;
  * @version 1.0
  * @since 1.0
  */
-class CardImpl extends ImageView implements Card {
-    static final int CARD_IMG_WIDTH = 221;
-    static final int CARD_IMG_HEIGHT = 300;
-    private static final Image IMG = new Image("/guru/bug/playcardsfx/cards.png");
-    private static final int BACK_COL = 0;
-    private static final int BACK_ROW = 4;
+class CardImpl extends CardsSliceView implements Card {
     private final ReadOnlyObjectWrapper<Rank> rank = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyObjectWrapper<Suit> suit = new ReadOnlyObjectWrapper<>();
     private final SimpleBooleanProperty faceDown = new SimpleBooleanProperty();
     private final SimpleObjectProperty<StackImpl> parentStack = new SimpleObjectProperty<>();
 
     CardImpl(Rank rank, Suit suit) {
-        super(IMG);
         this.rank.set(rank);
         this.suit.set(suit);
-        ObjectBinding<Rectangle2D> viewport = Bindings.createObjectBinding(() -> {
-            double col;
-            double row;
-            if (faceDown.get() || this.rank.get() == null || this.suit.get() == null) {
-                col = BACK_COL;
-                row = BACK_ROW;
+        sliceColProperty().bind(Bindings.createIntegerBinding(() -> {
+            if (this.faceDown.get() || this.rank.get() == null || this.suit.get() == null) {
+                return Images.BACK_COL;
             } else {
-                col = this.rank.get().ordinal();
-                row = this.suit.get().ordinal();
+                return this.rank.get().ordinal();
             }
-            double x = col * CARD_IMG_WIDTH;
-            double y = row * CARD_IMG_HEIGHT;
-            return new Rectangle2D(x, y, CARD_IMG_WIDTH, CARD_IMG_HEIGHT);
-        }, this.rank, this.suit, faceDown);
-        viewportProperty().bind(viewport);
+        }, this.faceDown, this.rank, this.suit));
+        sliceRowProperty().bind(Bindings.createIntegerBinding(() -> {
+            if (this.faceDown.get() || this.rank.get() == null || this.suit.get() == null) {
+                return Images.BACK_ROW;
+            } else {
+                return this.suit.get().ordinal();
+            }
+        }, this.faceDown, this.rank, this.suit));
         visibleProperty().bind(parentStack.isNotNull());
-        setManaged(true);
-    }
-
-    @Override
-    public boolean isResizable() {
-        return true;
-    }
-
-    @Override
-    public void resize(double width, double height) {
-        setFitWidth(width);
-        setFitHeight(height);
     }
 
     @Override

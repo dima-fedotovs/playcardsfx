@@ -1,6 +1,7 @@
 package guru.bug.playcardsfx;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * @author Dimitrijs Fedotovs <a href="http://www.bug.guru">www.bug.guru</a>
@@ -17,5 +18,7 @@ public interface Table {
     Card createCard(Rank rank, Suit suit);
 
     Stack createStack(double col, double row, double hOfs, double vOfs);
+
+    void onClick(BiConsumer<Stack, Card> onClick);
 
 }

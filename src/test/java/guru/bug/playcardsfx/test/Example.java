@@ -14,19 +14,26 @@ import java.util.stream.Collectors;
 public class Example {
 
     public static void main(String[] args) {
-        PlayCardsFX.launch(args, 5, 5, Example::start);
+        PlayCardsFX.launch(args, 7, 5, Example::start);
     }
 
     private static void start(Table table) {
-        List<Card> cards = table.createPack(false);
+        List<Card> cards = table.createPack(true);
         Collections.shuffle(cards);
-        List<Card> reds = cards.stream().filter(c -> c.getColor() == Color.RED).collect(Collectors.toList());
-        List<Card> blacks = cards.stream().filter(c -> c.getColor() == Color.BLACK).collect(Collectors.toList());
-        Stack redSt = table.createStack(0, 0, 0.2, 0.0);
-        Stack blackSt = table.createStack(0, 1.2, 0.2, 0);
-        blackSt.setCards(blacks);
-        Collections.shuffle(reds);
-        redSt.setCards(reds);
+        Stack deckStack = table.createStack(0.5, 0.5, 0.01, 0);
+        deckStack.setCards(cards);
+        Stack emptySt = table.createStack(3, 3.5, 0.2, 0);
+
+        table.onClick((stack, card) -> {
+            if (stack == deckStack && card != null) {
+                List<Card> rest = deckStack.getCards();
+                Card c = rest.get(rest.size() - 1);
+                List<Card> l = emptySt.getCards();
+                l.add(c);
+                c.setFaceDown(false);
+                emptySt.setCards(l);
+            }
+        });
     }
 
 }

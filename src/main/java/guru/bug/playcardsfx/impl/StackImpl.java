@@ -3,6 +3,7 @@ package guru.bug.playcardsfx.impl;
 import guru.bug.playcardsfx.Card;
 import guru.bug.playcardsfx.Stack;
 import javafx.beans.property.*;
+import javafx.scene.image.ImageView;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
  * @version 1.0
  * @since 1.0
  */
-public class StackImpl implements Stack {
+public class StackImpl extends CardsSliceView implements Stack {
     private final TableImpl table;
     private final SimpleDoubleProperty horizOffset = new SimpleDoubleProperty();
     private final SimpleDoubleProperty vertOffset = new SimpleDoubleProperty();
@@ -23,6 +24,7 @@ public class StackImpl implements Stack {
 
 
     StackImpl(TableImpl table) {
+        super(Images.PLACEHOLDER_COL, Images.PLACEHOLDER_ROW);
         this.table = table;
         startX.bind(table.cellWidthProperty().multiply(column));
         startY.bind(table.cellHeightProperty().multiply(row));
