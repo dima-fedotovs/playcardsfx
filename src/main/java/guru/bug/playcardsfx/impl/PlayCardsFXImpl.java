@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * @since 1.0
  */
 public class PlayCardsFXImpl {
-    public static void launch(String[] args, int width, int height, Consumer<Table> onStart) {
+    public static void launch(String[] args, double width, double height, Consumer<Table> onStart) {
         MainWindow.setupInitialValues(onStart, width, height);
         Application.launch(MainWindow.class, args);
     }

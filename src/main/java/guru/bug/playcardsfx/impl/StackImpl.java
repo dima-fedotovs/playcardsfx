@@ -2,10 +2,15 @@ package guru.bug.playcardsfx.impl;
 
 import guru.bug.playcardsfx.Card;
 import guru.bug.playcardsfx.Stack;
-import javafx.beans.property.*;
-import javafx.scene.image.ImageView;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyDoubleWrapper;
+import javafx.beans.property.SimpleDoubleProperty;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -42,6 +47,9 @@ public class StackImpl extends CardsSliceView implements Stack {
 
     @Override
     public void setCards(Collection<Card> cards) {
+        if (cards == null) {
+            cards = Collections.emptyList();
+        }
         List<CardImpl> oldMyCards = owningCards();
         List<CardImpl> newMyCards = cards.stream()
                 .map(c -> (CardImpl)c)

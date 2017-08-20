@@ -32,7 +32,7 @@ public class TableImpl extends Pane implements Table {
     private final ReadOnlyDoubleWrapper cellHeight = new ReadOnlyDoubleWrapper();
     private BiConsumer<Stack, Card> onClick;
 
-    TableImpl(int columns, int rows) {
+    TableImpl(double columns, double rows) {
         this.columns.set(columns);
         this.rows.set(rows);
         BackgroundImage backgroundImage = new BackgroundImage(Images.BACKGROUND_PATTERN, BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, null, null);

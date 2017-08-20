@@ -15,10 +15,10 @@ import java.util.function.Consumer;
  */
 public class MainWindow extends Application {
     private static Consumer<Table> onStart;
-    private static int initCols;
-    private static int initRows;
+    private static double initCols;
+    private static double initRows;
 
-    static void setupInitialValues(Consumer<Table> onStart, int cols, int rows) {
+    static void setupInitialValues(Consumer<Table> onStart, double cols, double rows) {
         MainWindow.onStart = onStart;
         MainWindow.initCols = cols;
         MainWindow.initRows = rows;

@@ -2,10 +2,9 @@ package guru.bug.playcardsfx.impl;
 
 import guru.bug.playcardsfx.*;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.*;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.image.ImageView;
+
+import java.util.Objects;
 
 
 /**
@@ -13,7 +12,7 @@ import javafx.scene.image.ImageView;
  * @version 1.0
  * @since 1.0
  */
-class CardImpl extends CardsSliceView implements Card {
+class CardImpl extends CardsSliceView implements Card, Comparable<CardImpl> {
     private final ReadOnlyObjectWrapper<Rank> rank = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyObjectWrapper<Suit> suit = new ReadOnlyObjectWrapper<>();
     private final SimpleBooleanProperty faceDown = new SimpleBooleanProperty();
@@ -99,5 +98,28 @@ class CardImpl extends CardsSliceView implements Card {
         return "Card{" + rank.get() +
                 ", " + suit.get() +
                 '}';
+    }
+
+    @Override
+    public int compareTo(CardImpl o) {
+        int result = this.rank.get().ordinal() - o.rank.get().ordinal();
+        if (result == 0) {
+            result = this.suit.get().ordinal() - o.suit.get().ordinal();
+        }
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CardImpl card = (CardImpl) o;
+        return Objects.equals(rank, card.rank) &&
+                Objects.equals(suit, card.suit);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rank, suit);
     }
 }
