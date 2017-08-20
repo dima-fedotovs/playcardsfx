@@ -12,7 +12,7 @@ import java.util.Objects;
  * @version 1.0
  * @since 1.0
  */
-class CardImpl extends CardsSliceView implements Card, Comparable<CardImpl> {
+class CardImpl extends CardsSliceView implements Card, Comparable<Card> {
     private final ReadOnlyObjectWrapper<Rank> rank = new ReadOnlyObjectWrapper<>();
     private final ReadOnlyObjectWrapper<Suit> suit = new ReadOnlyObjectWrapper<>();
     private final SimpleBooleanProperty faceDown = new SimpleBooleanProperty();
@@ -101,10 +101,10 @@ class CardImpl extends CardsSliceView implements Card, Comparable<CardImpl> {
     }
 
     @Override
-    public int compareTo(CardImpl o) {
-        int result = this.rank.get().ordinal() - o.rank.get().ordinal();
+    public int compareTo(Card o) {
+        int result = this.rank.get().ordinal() - o.getRank().ordinal();
         if (result == 0) {
-            result = this.suit.get().ordinal() - o.suit.get().ordinal();
+            result = this.suit.get().ordinal() - o.getSuit().ordinal();
         }
         return result;
     }

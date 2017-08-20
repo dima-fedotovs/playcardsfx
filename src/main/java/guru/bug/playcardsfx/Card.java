@@ -7,7 +7,7 @@ package guru.bug.playcardsfx;
  * @version 1.0
  * @since 1.0
  */
-public interface Card {
+public interface Card extends Comparable<Card> {
     /**
      * Gets {@link Rank} of the card
      *
