@@ -31,3 +31,5 @@ Sample code:
             });
         }
     }
+
+Card images are taken from [openclipart.org](https://openclipart.org/user-cliparts/nicubunu?page=8)
